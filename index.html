@@ -1,0 +1,2113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Pijar Netra POS</title>
+  <style>
+    :root {
+      --green: #1a5c3a;
+      --green-dark: #0f3d26;
+      --green-light: #2d8a5a;
+      --cream: #f5f0e1;
+      --cream-dark: #e8e0cc;
+      --text: #1a1a1a;
+      --text-muted: #555;
+      --card: #ffffff;
+      --border: #d4cbb8;
+      --danger: #c0392b;
+      --warning: #e67e22;
+      --success: #27ae60;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    html[data-theme="dark"],
+    html.dark {
+      --cream: #0f0f0f;
+      --cream-dark: #1a1a1a;
+      --text: #f0f0f0;
+      --text-muted: #b0b0b0;
+      --card: #1c1c1c;
+      --border: #333333;
+      --shadow: 0 2px 12px rgba(0,0,0,0.5);
+      --green: #3dcf7a;
+      --green-dark: #2da85f;
+      --green-light: #5ee09a;
+    }
+
+    html[data-theme="dark"] body,
+    html.dark body {
+      background: #0f0f0f !important;
+      color: #f0f0f0 !important;
+    }
+
+    html[data-theme="dark"] .card,
+    html.dark .menu-card,
+    html.dark .product-card,
+    html.dark .stock-item,
+    html.dark .history-card,
+    html.dark .settings-group,
+    html.dark .home-summary,
+    html.dark .modal {
+      background: #1c1c1c !important;
+      border-color: #333 !important;
+      color: #f0f0f0 !important;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 20px;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      background: var(--green);
+      color: white;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-svg {
+      width: 42px;
+      height: 42px;
+    }
+
+    .brand-name {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .icon-btn {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-btn:active {
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* ===== PAGES ===== */
+    .page {
+      display: none;
+      padding: 16px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* ===== HOME ===== */
+    .home-summary {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .home-summary h3 {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+
+    .summary-row strong {
+      color: var(--green);
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .menu-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 16px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: transform 0.15s;
+    }
+
+    .menu-card:active {
+      transform: scale(0.97);
+    }
+
+    .menu-card .icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .menu-card .label {
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--green);
+    }
+
+    /* ===== COMMON ===== */
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--green);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .btn:active {
+      opacity: 0.85;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: white;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--green);
+      color: var(--green);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    .btn-sm {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 15px;
+      background: var(--card);
+      color: var(--text);
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--green);
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    /* ===== KASIR ===== */
+    .customer-input {
+      margin-bottom: 14px;
+    }
+
+    .search-box {
+      margin-bottom: 14px;
+    }
+
+    .menu-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 100px;
+    }
+
+    .product-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .product-card.out {
+      opacity: 0.5;
+    }
+
+    .product-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .product-price {
+      color: var(--green);
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .product-notes {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .product-stock {
+      font-size: 11px;
+      margin-top: 4px;
+    }
+
+    .cart-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
+      z-index: 50;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .cart-info {
+      font-size: 14px;
+    }
+
+    .cart-total {
+      font-weight: 700;
+      color: var(--green);
+      font-size: 18px;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--card);
+      width: 100%;
+      max-width: 640px;
+      border-radius: 20px 20px 0 0;
+      padding: 20px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-header h3 {
+      font-size: 18px;
+      color: var(--green);
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .qty-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qty-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--green);
+      background: transparent;
+      color: var(--green);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .payment-methods {
+      display: flex;
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .pay-btn {
+      flex: 1;
+      padding: 14px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: var(--card);
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .pay-btn.active {
+      border-color: var(--green);
+      background: rgba(26,92,58,0.1);
+      color: var(--green);
+    }
+
+    .cash-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .cash-btn {
+      padding: 12px 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .cash-btn:active, .cash-btn.active {
+      background: var(--green);
+      color: white;
+      border-color: var(--green);
+    }
+
+    .change-box {
+      background: rgba(26,92,58,0.1);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+      margin: 12px 0;
+      font-size: 16px;
+    }
+
+    .change-box .label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .change-box .amount {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    /* ===== STOCK ===== */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .tab.active {
+      background: var(--green);
+      color: white;
+      border-color: var(--green);
+    }
+
+    .stock-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stock-info {
+      flex: 1;
+    }
+
+    .stock-name {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .stock-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .stock-value {
+      font-weight: 700;
+      font-size: 18px;
+      margin-right: 12px;
+    }
+
+    .stock-value.ok { color: var(--success); }
+    .stock-value.low { color: var(--warning); }
+    .stock-value.critical { color: var(--danger); }
+
+    .stock-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    /* ===== RIWAYAT ===== */
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .filter-btn.active {
+      background: var(--green);
+      color: white;
+      border-color: var(--green);
+    }
+
+    .history-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .history-card .top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .history-card .time {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .history-card .amount {
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    /* ===== SETTINGS ===== */
+    .settings-group {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .settings-group h4 {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .setting-row:last-child {
+      border-bottom: none;
+    }
+
+    .switch {
+      position: relative;
+      width: 48px;
+      height: 28px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #ccc;
+      border-radius: 28px;
+      transition: 0.2s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+
+    input:checked + .slider {
+      background: var(--green);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    /* ===== EMPTY STATE ===== */
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty .icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--green);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      z-index: 300;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      margin-right: 8px;
+    }
+  
+    .sync-status{position:fixed;right:12px;bottom:12px;z-index:9999;display:flex;align-items:center;gap:7px;padding:9px 12px;border-radius:999px;background:var(--card, #fff);color:var(--text, #222);border:1px solid var(--border, #ddd);box-shadow:0 3px 14px rgba(0,0,0,.12);font-size:12px;font-weight:600}
+    .sync-dot{width:8px;height:8px;border-radius:50%;background:#999;flex:none}
+    .sync-status[data-state="connected"] .sync-dot{background:#16a34a}
+    .sync-status[data-state="syncing"] .sync-dot{background:#eab308}
+    .sync-status[data-state="error"] .sync-dot{background:#dc2626}
+
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <div class="header" id="header">
+    <div class="header-left">
+      <button class="back-btn" id="backBtn" style="display:none;" onclick="goHome()">←</button>
+      <svg class="logo-svg" viewBox="0 0 100 100" fill="none">
+        <!-- Simplified eye logo inspired by Pijar Netra -->
+        <circle cx="50" cy="48" r="28" stroke="white" stroke-width="4" fill="none"/>
+        <circle cx="50" cy="48" r="12" fill="white"/>
+        <circle cx="50" cy="48" r="5" fill="#1a5c3a"/>
+        <!-- Rays -->
+        <path d="M50 12 L53 28 L47 28 Z" fill="white"/>
+        <path d="M78 22 L68 34 L62 28 Z" fill="white"/>
+        <path d="M88 48 L72 51 L72 45 Z" fill="white"/>
+        <path d="M78 74 L68 62 L62 68 Z" fill="white"/>
+        <path d="M50 84 L53 68 L47 68 Z" fill="white"/>
+        <path d="M22 74 L32 62 L38 68 Z" fill="white"/>
+        <path d="M12 48 L28 51 L28 45 Z" fill="white"/>
+        <path d="M22 22 L32 34 L38 28 Z" fill="white"/>
+      </svg>
+      <div class="brand-name">Pijar Netra</div>
+    </div>
+    <div class="header-right">
+      <button class="icon-btn" onclick="toggleTheme()" title="Theme">◐</button>
+      <button class="icon-btn" onclick="showPage('settings')" title="Settings">⚙</button>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div class="page active" id="page-home">
+    <div class="home-summary" id="homeSummary">
+      <h3>Hari Ini</h3>
+      <div class="summary-row">
+        <span>Total Penjualan</span>
+        <strong id="sumTotal">Rp 0</strong>
+      </div>
+      <div class="summary-row">
+        <span>Jumlah Transaksi</span>
+        <strong id="sumCount">0</strong>
+      </div>
+    </div>
+
+    <div class="menu-grid">
+      <div class="menu-card" onclick="showPage('kasir')">
+        <div class="icon">☕</div>
+        <div class="label">Kasir</div>
+      </div>
+      <div class="menu-card" onclick="showPage('stock')">
+        <div class="icon">📦</div>
+        <div class="label">Stock</div>
+      </div>
+      <div class="menu-card" onclick="showPage('riwayat')">
+        <div class="icon">📋</div>
+        <div class="label">Riwayat</div>
+      </div>
+      <div class="menu-card" onclick="showPage('settings')">
+        <div class="icon">⚙</div>
+        <div class="label">Settings</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KASIR -->
+  <div class="page" id="page-kasir">
+    <div class="section-title">Kasir</div>
+
+    <div class="form-group customer-input" id="customerNameGroup">
+      <label>Atas Nama (opsional)</label>
+      <input type="text" id="customerName" placeholder="Nama customer...">
+    </div>
+
+    <div class="search-box">
+      <input type="text" id="searchMenu" placeholder="Cari menu..." oninput="renderKasirMenus()">
+    </div>
+
+    <div class="menu-list" id="kasirMenuList"></div>
+
+    <div class="cart-bar" id="cartBar" style="display:none;">
+      <div class="cart-info">
+        <div id="cartCount">0 item</div>
+        <div class="cart-total" id="cartTotal">Rp 0</div>
+      </div>
+      <button class="btn btn-primary" onclick="openCartModal()">Bayar</button>
+    </div>
+  </div>
+
+  <!-- STOCK -->
+  <div class="page" id="page-stock">
+    <div class="section-title">Stock</div>
+    <div class="tabs">
+      <div class="tab active" data-tab="menu" onclick="switchStockTab('menu')">Menu</div>
+      <div class="tab" data-tab="bahan" onclick="switchStockTab('bahan')">Bahan Baku</div>
+    </div>
+    <div id="stockList"></div>
+    <button class="btn btn-primary btn-block" style="margin-top:12px;" onclick="openAddItemModal()">+ Tambah Item</button>
+  </div>
+
+  <!-- RIWAYAT -->
+  <div class="page" id="page-riwayat">
+    <div class="section-title">Riwayat</div>
+    <div class="tabs">
+      <div class="tab active" data-tab="trx" onclick="switchRiwayatTab('trx')">Transaksi</div>
+      <div class="tab" data-tab="stock" onclick="switchRiwayatTab('stock')">Perubahan Stok</div>
+    </div>
+    <div class="filter-row">
+      <button class="filter-btn active" data-filter="today" onclick="setRiwayatFilter('today')">Hari Ini</button>
+      <button class="filter-btn" data-filter="yesterday" onclick="setRiwayatFilter('yesterday')">Kemarin</button>
+      <button class="filter-btn" data-filter="all" onclick="setRiwayatFilter('all')">Semua</button>
+    </div>
+    <button class="btn btn-danger btn-sm" style="margin-bottom:12px;" onclick="confirmDeleteAllRiwayat()">Hapus Semua di Tab Ini</button>
+    <div id="riwayatList"></div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="page" id="page-settings">
+    <div class="section-title">Settings</div>
+
+    <div class="settings-group">
+      <h4>Tampilan</h4>
+      <div class="setting-row">
+        <span>Dark Mode</span>
+        <label class="switch">
+          <input type="checkbox" id="themeToggle" onchange="toggleThemeFromSettings()">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <span>Tampilkan Atas Nama</span>
+        <label class="switch">
+          <input type="checkbox" id="showCustomerName" checked onchange="saveSettings()">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <span>Tampilkan Notes Menu</span>
+        <label class="switch">
+          <input type="checkbox" id="showMenuNotes" checked onchange="saveSettings()">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <h4>Stok</h4>
+      <div class="form-group">
+        <label>Batas Stok Minimum</label>
+        <input type="number" id="minStockDefault" value="10" min="0" onchange="saveSettings()">
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <h4>Data</h4>
+      <button class="btn btn-outline btn-block" style="margin-bottom:10px;" onclick="exportData()">Export Data (JSON)</button>
+      <button class="btn btn-outline btn-block" style="margin-bottom:10px;" onclick="document.getElementById('importFile').click()">Import Data</button>
+      <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(event)">
+      <button class="btn btn-danger btn-block" onclick="confirmClearData()">Hapus Semua Data</button>
+    </div>
+  </div>
+
+  <!-- CART / PAYMENT MODAL -->
+  <div class="modal-overlay" id="cartModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Keranjang & Bayar</h3>
+        <button class="close-btn" onclick="closeModal('cartModal')">×</button>
+      </div>
+      <div id="cartItems"></div>
+      <div style="margin:16px 0; font-size:18px; font-weight:700; text-align:right;">
+        Total: <span id="modalTotal" style="color:var(--green);">Rp 0</span>
+      </div>
+
+      <div class="payment-methods">
+        <button class="pay-btn active" id="payCash" onclick="selectPayment('cash')">Cash</button>
+        <button class="pay-btn" id="payQris" onclick="selectPayment('qris')">QRIS</button>
+      </div>
+
+      <div id="cashSection">
+        <div class="cash-buttons">
+          <button class="cash-btn" onclick="setCashAmount('pas', this)">Uang Pas</button>
+          <button class="cash-btn" onclick="setCashAmount(5000, this)">5</button>
+          <button class="cash-btn" onclick="setCashAmount(10000, this)">10</button>
+          <button class="cash-btn" onclick="setCashAmount(20000, this)">20</button>
+          <button class="cash-btn" onclick="setCashAmount(40000, this)">40</button>
+          <button class="cash-btn" onclick="setCashAmount(50000, this)">50</button>
+          <button class="cash-btn" onclick="setCashAmount(100000, this)">100</button>
+        </div>
+        <div class="form-group">
+          <label>Atau input manual (Rp)</label>
+          <input type="number" id="manualPaid" placeholder="Contoh: 35000" oninput="calcChange()">
+        </div>
+        <div class="change-box" id="changeBox" style="display:none;">
+          <div class="label">Kembalian</div>
+          <div class="amount" id="changeAmount">Rp 0</div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-block" style="margin-top:12px;" onclick="finishTransaction()">Selesai Transaksi</button>
+      <button class="btn btn-outline btn-block" style="margin-top:8px;" onclick="repeatLastTransaction()" id="repeatBtn">Ulangi Transaksi Terakhir</button>
+    </div>
+  </div>
+
+  <!-- ADD / EDIT ITEM MODAL -->
+  <div class="modal-overlay" id="itemModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="itemModalTitle">Tambah Menu</h3>
+        <button class="close-btn" onclick="closeModal('itemModal')">×</button>
+      </div>
+      <input type="hidden" id="editItemId">
+      <input type="hidden" id="editItemType">
+      <div class="form-group">
+        <label>Nama</label>
+        <input type="text" id="itemName" placeholder="Nama item">
+      </div>
+      <div class="form-group" id="itemPriceGroup">
+        <label>Harga (Rp)</label>
+        <input type="number" id="itemPrice" placeholder="18000">
+      </div>
+      <div class="form-group" id="itemCategoryGroup">
+        <label>Kategori</label>
+        <input type="text" id="itemCategory" placeholder="Kopi / Non-Kopi / Snack">
+      </div>
+      <div class="form-group">
+        <label>Stok Awal / Saat Ini</label>
+        <input type="number" id="itemStock" placeholder="0" min="0">
+      </div>
+      <div class="form-group" id="itemUnitGroup" style="display:none;">
+        <label>Satuan</label>
+        <input type="text" id="itemUnit" placeholder="pcs / gram / ml">
+      </div>
+      <div class="form-group" id="itemNotesGroup">
+        <label>Deskripsi (opsional)</label>
+        <input type="text" id="itemNotes" placeholder="Contoh: Signature creamy coffee">
+      </div>
+      <div class="form-group" id="itemModifiersGroup">
+        <label>Modifier (pisah koma)</label>
+        <input type="text" id="itemModifiers" placeholder="Less Ice, Less Sugar, Extra Shot, Double Shot">
+      </div>
+      <button class="btn btn-primary btn-block" onclick="saveItem()">Simpan</button>
+    </div>
+  </div>
+
+  <!-- OPNAME MODAL -->
+  <div class="modal-overlay" id="opnameModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Opname Stok</h3>
+        <button class="close-btn" onclick="closeModal('opnameModal')">×</button>
+      </div>
+      <p id="opnameItemName" style="font-weight:600; margin-bottom:12px;"></p>
+      <div class="form-group">
+        <label>Stok Sistem Saat Ini</label>
+        <input type="number" id="opnameBefore" readonly>
+      </div>
+      <div class="form-group">
+        <label>Jumlah Fisik</label>
+        <input type="number" id="opnamePhysical" placeholder="Hitungan fisik" min="0" oninput="calcOpnameDiff()">
+      </div>
+      <div class="form-group">
+        <label>Selisih</label>
+        <input type="text" id="opnameDiff" readonly>
+      </div>
+      <div class="form-group">
+        <label>Alasan (opsional)</label>
+        <input type="text" id="opnameReason" placeholder="Rusak / hilang / dll">
+      </div>
+      <button class="btn btn-primary btn-block" onclick="saveOpname()">Simpan Opname</button>
+    </div>
+  </div>
+
+  <!-- CONFIRM MODAL -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Konfirmasi</h3>
+        <button class="close-btn" onclick="closeModal('confirmModal')">×</button>
+      </div>
+      <p id="confirmText" style="margin-bottom:20px;"></p>
+      <div style="display:flex; gap:10px;">
+        <button class="btn btn-outline btn-block" onclick="closeModal('confirmModal')">Batal</button>
+        <button class="btn btn-danger btn-block" id="confirmYesBtn">Ya, Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL MODAL -->
+  <div class="modal-overlay" id="detailModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Detail</h3>
+        <button class="close-btn" onclick="closeModal('detailModal')">×</button>
+      </div>
+      <div id="detailContent"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div class="sync-status" id="syncStatus" data-state="syncing" aria-live="polite"><span class="sync-dot"></span><span id="syncStatusText">Menyiapkan sinkronisasi…</span></div>
+
+  <script>
+    // ========== STATE ==========
+    let menus = [];
+    let bahan = [];
+    let transactions = [];
+    let stockLogs = [];
+    let settings = {
+      theme: 'light',
+      showCustomerName: true,
+      showMenuNotes: true,
+      minStock: 10
+    };
+    let cart = [];
+    let currentPayment = 'cash';
+    let paidAmount = 0;
+    let currentStockTab = 'menu';
+    let currentRiwayatTab = 'trx';
+    let riwayatFilter = 'today';
+    let lastTransaction = null;
+    let pendingDelete = null;
+
+    // ========== INIT ==========
+    function init() {
+      loadData();
+      applyTheme();
+      applySettingsUI();
+      renderHomeSummary();
+      // Seed sample data if empty
+      if (menus.length === 0) {
+        menus = [
+          { id: 'm1', name: 'Es Kopi Susu', price: 18000, category: 'Kopi', stock: 50, notes: 'Signature creamy coffee', modifiers: ['Less Ice', 'Less Sugar', 'Extra Shot', 'Double Shot'], active: true },
+          { id: 'm2', name: 'Americano', price: 15000, category: 'Kopi', stock: 40, notes: 'Strong & clean', modifiers: ['Less Ice', 'Extra Shot', 'Hot'], active: true },
+          { id: 'm3', name: 'Kopi Susu Gula Aren', price: 20000, category: 'Kopi', stock: 35, notes: 'Signature', modifiers: ['Less Ice', 'Less Sugar', 'Extra Shot'], active: true },
+          { id: 'm4', name: 'Matcha Latte', price: 22000, category: 'Non-Kopi', stock: 25, notes: 'Premium matcha', modifiers: ['Less Ice', 'Less Sugar', 'Hot'], active: true },
+          { id: 'm5', name: 'Chocolate', price: 20000, category: 'Non-Kopi', stock: 20, notes: '', modifiers: ['Less Ice', 'Less Sugar', 'Hot'], active: true }
+        ];
+        bahan = [
+          { id: 'b1', name: 'Cup 12oz', stock: 150, unit: 'pcs', minStock: 30 },
+          { id: 'b2', name: 'Lid', stock: 140, unit: 'pcs', minStock: 30 },
+          { id: 'b3', name: 'Biji Kopi (g)', stock: 2000, unit: 'gram', minStock: 300 },
+          { id: 'b4', name: 'Susu UHT (ml)', stock: 5000, unit: 'ml', minStock: 1000 },
+          { id: 'b5', name: 'Gula Aren (g)', stock: 800, unit: 'gram', minStock: 100 }
+        ];
+        saveData();
+      }
+    }
+
+    function loadData() {
+      try {
+        menus = JSON.parse(localStorage.getItem('pijar_menus') || '[]');
+        bahan = JSON.parse(localStorage.getItem('pijar_bahan') || '[]');
+        transactions = JSON.parse(localStorage.getItem('pijar_transactions') || '[]');
+        stockLogs = JSON.parse(localStorage.getItem('pijar_stockLogs') || '[]');
+        const s = localStorage.getItem('pijar_settings');
+        if (s) settings = { ...settings, ...JSON.parse(s) };
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem('pijar_menus', JSON.stringify(menus));
+      localStorage.setItem('pijar_bahan', JSON.stringify(bahan));
+      localStorage.setItem('pijar_transactions', JSON.stringify(transactions));
+      localStorage.setItem('pijar_stockLogs', JSON.stringify(stockLogs));
+      localStorage.setItem('pijar_settings', JSON.stringify(settings));
+      if (typeof window.pijarQueueSync === 'function') window.pijarQueueSync();
+    }
+
+    // ========== THEME ==========
+    function applyTheme() {
+      const isDark = settings.theme === 'dark';
+      document.documentElement.setAttribute('data-theme', settings.theme);
+      document.documentElement.classList.toggle('dark', isDark);
+      document.body.setAttribute('data-theme', settings.theme);
+      document.body.classList.toggle('dark', isDark);
+      const toggle = document.getElementById('themeToggle');
+      if (toggle) toggle.checked = isDark;
+    }
+
+    function toggleTheme() {
+      settings.theme = settings.theme === 'light' ? 'dark' : 'light';
+      saveData();
+      applyTheme();
+    }
+
+    function toggleThemeFromSettings() {
+      settings.theme = document.getElementById('themeToggle').checked ? 'dark' : 'light';
+      saveData();
+      applyTheme();
+    }
+
+    function applySettingsUI() {
+      document.getElementById('showCustomerName').checked = settings.showCustomerName;
+      document.getElementById('showMenuNotes').checked = settings.showMenuNotes;
+      document.getElementById('minStockDefault').value = settings.minStock;
+      document.getElementById('customerNameGroup').style.display = settings.showCustomerName ? 'block' : 'none';
+    }
+
+    function saveSettings() {
+      settings.showCustomerName = document.getElementById('showCustomerName').checked;
+      settings.showMenuNotes = document.getElementById('showMenuNotes').checked;
+      const parsedMinStock = parseInt(document.getElementById('minStockDefault').value, 10);
+      settings.minStock = Number.isFinite(parsedMinStock) && parsedMinStock >= 0 ? parsedMinStock : 10;
+      saveData();
+      applySettingsUI();
+      toast('Settings disimpan');
+    }
+
+    // ========== NAVIGATION ==========
+    function showPage(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + page).classList.add('active');
+      document.getElementById('backBtn').style.display = page === 'home' ? 'none' : 'block';
+
+      if (page === 'kasir') {
+        cart = [];
+        document.getElementById('customerName').value = '';
+        renderKasirMenus();
+        updateCartBar();
+      } else if (page === 'stock') {
+        renderStock();
+      } else if (page === 'riwayat') {
+        renderRiwayat();
+      } else if (page === 'home') {
+        renderHomeSummary();
+      } else if (page === 'settings') {
+        applySettingsUI();
+      }
+    }
+
+    function goHome() {
+      showPage('home');
+    }
+
+    // ========== HOME SUMMARY ==========
+    function renderHomeSummary() {
+      const today = new Date().toDateString();
+      const todayTrx = transactions.filter(t => new Date(t.date).toDateString() === today);
+      const total = todayTrx.reduce((s, t) => s + t.total, 0);
+      document.getElementById('sumTotal').textContent = formatRp(total);
+      document.getElementById('sumCount').textContent = todayTrx.length;
+    }
+
+    // ========== KASIR ==========
+    function renderKasirMenus() {
+      const q = (document.getElementById('searchMenu').value || '').toLowerCase();
+      const list = document.getElementById('kasirMenuList');
+      const filtered = menus.filter(m => m.active && m.name.toLowerCase().includes(q));
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<div class="empty"><div class="icon">☕</div>Belum ada menu</div>';
+        return;
+      }
+
+      list.innerHTML = filtered.map(m => {
+        const inCart = cart.find(c => c.menuId === m.id);
+        const qty = inCart ? inCart.qty : 0;
+        return `
+          <div class="product-card ${m.stock <= 0 ? 'out' : ''}" onclick="addToCart('${m.id}')">
+            <div class="product-name">${m.name}</div>
+            <div class="product-price">${formatRp(m.price)}</div>
+            ${settings.showMenuNotes && m.notes ? `<div class="product-notes">${m.notes}</div>` : ''}
+            <div class="product-stock">Stok: ${m.stock}${qty ? ` · di keranjang: ${qty}` : ''}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function addToCart(menuId) {
+      const menu = menus.find(m => m.id === menuId);
+      if (!menu || menu.stock <= 0) {
+        toast('Stok habis');
+        return;
+      }
+      // Always add as new line so different modifiers can be chosen later
+      cart.push({
+        menuId: menu.id,
+        name: menu.name,
+        price: menu.price,
+        qty: 1,
+        subtotal: menu.price,
+        selectedModifiers: []
+      });
+      updateCartBar();
+      renderKasirMenus();
+    }
+
+    function updateCartBar() {
+      const bar = document.getElementById('cartBar');
+      if (cart.length === 0) {
+        bar.style.display = 'none';
+        return;
+      }
+      bar.style.display = 'flex';
+      const totalQty = cart.reduce((s, c) => s + c.qty, 0);
+      const total = cart.reduce((s, c) => s + c.subtotal, 0);
+      document.getElementById('cartCount').textContent = totalQty + ' item';
+      document.getElementById('cartTotal').textContent = formatRp(total);
+    }
+
+    function openCartModal() {
+      if (cart.length === 0) return;
+      renderCartItems();
+      selectPayment('cash');
+      document.getElementById('manualPaid').value = '';
+      document.getElementById('changeBox').style.display = 'none';
+      paidAmount = 0;
+      document.getElementById('cartModal').classList.add('show');
+      // Show repeat button only if lastTransaction exists
+      document.getElementById('repeatBtn').style.display = lastTransaction ? 'block' : 'none';
+    }
+
+    function renderCartItems() {
+      const container = document.getElementById('cartItems');
+      container.innerHTML = cart.map((c, i) => {
+        const menu = menus.find(m => m.id === c.menuId);
+        const mods = (menu && menu.modifiers) ? menu.modifiers : [];
+        const modHtml = mods.length ? `
+          <div style="margin-top:8px; font-size:13px;">
+            ${mods.map(mod => {
+              const checked = (c.selectedModifiers || []).includes(mod) ? 'checked' : '';
+              return `<label style="display:inline-flex; align-items:center; gap:4px; margin-right:10px; margin-bottom:4px; cursor:pointer;">
+                <input type="checkbox" ${checked} onchange="toggleModifier(${i}, '${mod.replace(/'/g, "\\'")}')">
+                ${mod}
+              </label>`;
+            }).join('')}
+          </div>
+        ` : '';
+        return `
+          <div class="cart-item" style="flex-direction:column; align-items:stretch;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-weight:600;">${c.name}</div>
+                <div style="font-size:13px; color:var(--text-muted);">${formatRp(c.price)} × ${c.qty}</div>
+              </div>
+              <div class="qty-control">
+                <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
+                <span>${c.qty}</span>
+                <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
+              </div>
+            </div>
+            ${modHtml}
+          </div>
+        `;
+      }).join('');
+      const total = cart.reduce((s, c) => s + c.subtotal, 0);
+      document.getElementById('modalTotal').textContent = formatRp(total);
+    }
+
+    function toggleModifier(index, mod) {
+      const item = cart[index];
+      if (!item.selectedModifiers) item.selectedModifiers = [];
+      const idx = item.selectedModifiers.indexOf(mod);
+      if (idx >= 0) {
+        item.selectedModifiers.splice(idx, 1);
+      } else {
+        item.selectedModifiers.push(mod);
+      }
+    }
+
+    function changeQty(index, delta) {
+      const item = cart[index];
+      const menu = menus.find(m => m.id === item.menuId);
+      if (delta > 0 && item.qty >= menu.stock) {
+        toast('Stok tidak cukup');
+        return;
+      }
+      item.qty += delta;
+      if (item.qty <= 0) {
+        cart.splice(index, 1);
+      } else {
+        item.subtotal = item.qty * item.price;
+      }
+      if (cart.length === 0) {
+        closeModal('cartModal');
+        updateCartBar();
+        renderKasirMenus();
+        return;
+      }
+      renderCartItems();
+      updateCartBar();
+      calcChange();
+    }
+
+    function selectPayment(method) {
+      currentPayment = method;
+      document.getElementById('payCash').classList.toggle('active', method === 'cash');
+      document.getElementById('payQris').classList.toggle('active', method === 'qris');
+      document.getElementById('cashSection').style.display = method === 'cash' ? 'block' : 'none';
+      if (method === 'qris') {
+        paidAmount = cart.reduce((s, c) => s + c.subtotal, 0);
+        document.getElementById('changeBox').style.display = 'none';
+      } else {
+        calcChange();
+      }
+    }
+
+    function setCashAmount(val, btn) {
+      const total = cart.reduce((s, c) => s + c.subtotal, 0);
+      if (val === 'pas') {
+        paidAmount = total;
+        document.getElementById('manualPaid').value = total;
+      } else {
+        paidAmount = val;
+        document.getElementById('manualPaid').value = val;
+      }
+      // highlight
+      document.querySelectorAll('.cash-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      calcChange();
+    }
+
+    function calcChange() {
+      const total = cart.reduce((s, c) => s + c.subtotal, 0);
+      const manual = parseInt(document.getElementById('manualPaid').value) || 0;
+      paidAmount = manual || paidAmount;
+      const change = paidAmount - total;
+      const box = document.getElementById('changeBox');
+      if (paidAmount > 0) {
+        box.style.display = 'block';
+        document.getElementById('changeAmount').textContent = formatRp(Math.max(0, change));
+        if (change < 0) {
+          document.getElementById('changeAmount').textContent = 'Kurang ' + formatRp(Math.abs(change));
+          document.getElementById('changeAmount').style.color = 'var(--danger)';
+        } else {
+          document.getElementById('changeAmount').style.color = 'var(--green)';
+        }
+      } else {
+        box.style.display = 'none';
+      }
+    }
+
+    function finishTransaction() {
+      if (cart.length === 0) return;
+      const total = cart.reduce((s, c) => s + c.subtotal, 0);
+
+      if (currentPayment === 'cash') {
+        if (paidAmount < total) {
+          toast('Uang tidak cukup');
+          return;
+        }
+      } else {
+        paidAmount = total;
+      }
+
+      // Check stock again
+      for (const item of cart) {
+        const menu = menus.find(m => m.id === item.menuId);
+        if (!menu || menu.stock < item.qty) {
+          toast('Stok ' + item.name + ' tidak cukup');
+          return;
+        }
+      }
+
+      // Deduct stock
+      cart.forEach(item => {
+        const menu = menus.find(m => m.id === item.menuId);
+        const before = menu.stock;
+        menu.stock -= item.qty;
+        stockLogs.unshift({
+          id: 's' + Date.now() + Math.random().toString(36).slice(2,6),
+          date: new Date().toISOString(),
+          type: 'sale',
+          itemType: 'menu',
+          itemId: menu.id,
+          itemName: menu.name,
+          before,
+          after: menu.stock,
+          difference: -item.qty,
+          reason: 'Penjualan'
+        });
+      });
+
+      const trx = {
+        id: 't' + Date.now(),
+        date: new Date().toISOString(),
+        customerName: document.getElementById('customerName').value.trim() || '',
+        items: JSON.parse(JSON.stringify(cart)),
+        total,
+        paymentMethod: currentPayment,
+        paid: paidAmount,
+        change: currentPayment === 'cash' ? paidAmount - total : 0,
+        notes: ''
+      };
+
+      transactions.unshift(trx);
+      lastTransaction = JSON.parse(JSON.stringify(trx));
+      saveData();
+
+      cart = [];
+      closeModal('cartModal');
+      updateCartBar();
+      renderKasirMenus();
+      toast('Transaksi berhasil ✓');
+    }
+
+    function repeatLastTransaction() {
+      if (!lastTransaction) return;
+      // Check stock availability
+      for (const item of lastTransaction.items) {
+        const menu = menus.find(m => m.id === item.menuId);
+        if (!menu || menu.stock < item.qty) {
+          toast('Stok tidak cukup untuk ulangi');
+          return;
+        }
+      }
+      cart = JSON.parse(JSON.stringify(lastTransaction.items));
+      document.getElementById('customerName').value = lastTransaction.customerName || '';
+      closeModal('cartModal');
+      updateCartBar();
+      renderKasirMenus();
+      openCartModal();
+      toast('Transaksi terakhir dimuat');
+    }
+
+    // ========== STOCK ==========
+    function switchStockTab(tab) {
+      currentStockTab = tab;
+      document.querySelectorAll('#page-stock .tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === tab);
+      });
+      renderStock();
+    }
+
+    function renderStock() {
+      const list = document.getElementById('stockList');
+      const items = currentStockTab === 'menu' ? menus : bahan;
+      const minStock = settings.minStock;
+
+      if (items.length === 0) {
+        list.innerHTML = '<div class="empty"><div class="icon">📦</div>Belum ada item</div>';
+        return;
+      }
+
+      list.innerHTML = items.map(item => {
+        const stock = item.stock;
+        let cls = 'ok';
+        if (stock <= 0) cls = 'critical';
+        else if (stock <= (item.minStock || minStock)) cls = 'low';
+
+        return `
+          <div class="stock-item">
+            <div class="stock-info">
+              <div class="stock-name">${item.name}</div>
+              <div class="stock-meta">
+                ${currentStockTab === 'menu' ? formatRp(item.price) + ' · ' + (item.category || '') : (item.unit || '')}
+                ${item.notes ? ' · ' + item.notes : ''}
+              </div>
+            </div>
+            <div class="stock-value ${cls}">${stock}</div>
+            <div class="stock-actions">
+              <button class="btn btn-sm btn-outline" onclick="adjustStock('${item.id}', 1)">+</button>
+              <button class="btn btn-sm btn-outline" onclick="adjustStock('${item.id}', -1)">−</button>
+              <button class="btn btn-sm btn-primary" onclick="openOpname('${item.id}')">Opname</button>
+              <button class="btn btn-sm btn-outline" onclick="openEditItem('${item.id}')">✎</button>
+              <button class="btn btn-sm btn-danger" onclick="confirmDeleteItem('${item.id}')">✕</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function adjustStock(id, delta) {
+      const isMenu = currentStockTab === 'menu';
+      const arr = isMenu ? menus : bahan;
+      const item = arr.find(i => i.id === id);
+      if (!item) return;
+      const before = item.stock;
+      item.stock = Math.max(0, item.stock + delta);
+      stockLogs.unshift({
+        id: 's' + Date.now(),
+        date: new Date().toISOString(),
+        type: 'manual',
+        itemType: isMenu ? 'menu' : 'bahan',
+        itemId: item.id,
+        itemName: item.name,
+        before,
+        after: item.stock,
+        difference: item.stock - before,
+        reason: 'Update manual'
+      });
+      saveData();
+      renderStock();
+    }
+
+    function openAddItemModal() {
+      document.getElementById('itemModalTitle').textContent = currentStockTab === 'menu' ? 'Tambah Menu' : 'Tambah Bahan Baku';
+      document.getElementById('editItemId').value = '';
+      document.getElementById('editItemType').value = currentStockTab;
+      document.getElementById('itemName').value = '';
+      document.getElementById('itemPrice').value = '';
+      document.getElementById('itemCategory').value = '';
+      document.getElementById('itemStock').value = '0';
+      document.getElementById('itemUnit').value = '';
+      document.getElementById('itemNotes').value = '';
+      document.getElementById('itemModifiers').value = '';
+
+      document.getElementById('itemPriceGroup').style.display = currentStockTab === 'menu' ? 'block' : 'none';
+      document.getElementById('itemCategoryGroup').style.display = currentStockTab === 'menu' ? 'block' : 'none';
+      document.getElementById('itemNotesGroup').style.display = currentStockTab === 'menu' ? 'block' : 'none';
+      document.getElementById('itemModifiersGroup').style.display = currentStockTab === 'menu' ? 'block' : 'none';
+      document.getElementById('itemUnitGroup').style.display = currentStockTab === 'bahan' ? 'block' : 'none';
+
+      document.getElementById('itemModal').classList.add('show');
+    }
+
+    function openEditItem(id) {
+      const isMenu = currentStockTab === 'menu';
+      const arr = isMenu ? menus : bahan;
+      const item = arr.find(i => i.id === id);
+      if (!item) return;
+
+      document.getElementById('itemModalTitle').textContent = 'Edit ' + (isMenu ? 'Menu' : 'Bahan');
+      document.getElementById('editItemId').value = id;
+      document.getElementById('editItemType').value = currentStockTab;
+      document.getElementById('itemName').value = item.name;
+      document.getElementById('itemPrice').value = item.price || '';
+      document.getElementById('itemCategory').value = item.category || '';
+      document.getElementById('itemStock').value = item.stock;
+      document.getElementById('itemUnit').value = item.unit || '';
+      document.getElementById('itemNotes').value = item.notes || '';
+      document.getElementById('itemModifiers').value = (item.modifiers || []).join(', ');
+
+      document.getElementById('itemPriceGroup').style.display = isMenu ? 'block' : 'none';
+      document.getElementById('itemCategoryGroup').style.display = isMenu ? 'block' : 'none';
+      document.getElementById('itemNotesGroup').style.display = isMenu ? 'block' : 'none';
+      document.getElementById('itemModifiersGroup').style.display = isMenu ? 'block' : 'none';
+      document.getElementById('itemUnitGroup').style.display = !isMenu ? 'block' : 'none';
+
+      document.getElementById('itemModal').classList.add('show');
+    }
+
+    function saveItem() {
+      const id = document.getElementById('editItemId').value;
+      const type = document.getElementById('editItemType').value;
+      const name = document.getElementById('itemName').value.trim();
+      if (!name) {
+        toast('Nama wajib diisi');
+        return;
+      }
+
+      if (type === 'menu') {
+        const price = parseInt(document.getElementById('itemPrice').value) || 0;
+        const category = document.getElementById('itemCategory').value.trim();
+        const stock = parseInt(document.getElementById('itemStock').value) || 0;
+        const notes = document.getElementById('itemNotes').value.trim();
+        const modifiersRaw = document.getElementById('itemModifiers').value.trim();
+        const modifiers = modifiersRaw ? modifiersRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+        if (id) {
+          const item = menus.find(m => m.id === id);
+          item.name = name;
+          item.price = price;
+          item.category = category;
+          item.stock = stock;
+          item.notes = notes;
+          item.modifiers = modifiers;
+        } else {
+          menus.push({
+            id: 'm' + Date.now(),
+            name, price, category, stock, notes, modifiers, active: true
+          });
+        }
+      } else {
+        const stock = parseInt(document.getElementById('itemStock').value) || 0;
+        const unit = document.getElementById('itemUnit').value.trim() || 'pcs';
+
+        if (id) {
+          const item = bahan.find(b => b.id === id);
+          item.name = name;
+          item.stock = stock;
+          item.unit = unit;
+        } else {
+          bahan.push({
+            id: 'b' + Date.now(),
+            name, stock, unit, minStock: settings.minStock
+          });
+        }
+      }
+
+      saveData();
+      closeModal('itemModal');
+      renderStock();
+      toast('Tersimpan');
+    }
+
+    function confirmDeleteItem(id) {
+      pendingDelete = { id, type: currentStockTab };
+      document.getElementById('confirmText').textContent = 'Yakin mau hapus item ini? Tindakan ini tidak bisa dibatalkan.';
+      document.getElementById('confirmYesBtn').onclick = doDeleteItem;
+      document.getElementById('confirmModal').classList.add('show');
+    }
+
+    function doDeleteItem() {
+      if (!pendingDelete) return;
+      if (pendingDelete.type === 'menu') {
+        menus = menus.filter(m => m.id !== pendingDelete.id);
+      } else {
+        bahan = bahan.filter(b => b.id !== pendingDelete.id);
+      }
+      saveData();
+      closeModal('confirmModal');
+      renderStock();
+      toast('Item dihapus');
+      pendingDelete = null;
+    }
+
+    function openOpname(id) {
+      const isMenu = currentStockTab === 'menu';
+      const arr = isMenu ? menus : bahan;
+      const item = arr.find(i => i.id === id);
+      if (!item) return;
+
+      document.getElementById('opnameItemName').textContent = item.name;
+      document.getElementById('opnameBefore').value = item.stock;
+      document.getElementById('opnamePhysical').value = '';
+      document.getElementById('opnameDiff').value = '';
+      document.getElementById('opnameReason').value = '';
+      document.getElementById('opnameModal').dataset.id = id;
+      document.getElementById('opnameModal').dataset.type = currentStockTab;
+      document.getElementById('opnameModal').classList.add('show');
+    }
+
+    function calcOpnameDiff() {
+      const before = parseInt(document.getElementById('opnameBefore').value) || 0;
+      const physical = parseInt(document.getElementById('opnamePhysical').value);
+      if (isNaN(physical)) {
+        document.getElementById('opnameDiff').value = '';
+        return;
+      }
+      const diff = physical - before;
+      document.getElementById('opnameDiff').value = (diff >= 0 ? '+' : '') + diff;
+    }
+
+    function saveOpname() {
+      const id = document.getElementById('opnameModal').dataset.id;
+      const type = document.getElementById('opnameModal').dataset.type;
+      const physical = parseInt(document.getElementById('opnamePhysical').value);
+      if (isNaN(physical) || physical < 0) {
+        toast('Jumlah fisik tidak valid');
+        return;
+      }
+
+      const arr = type === 'menu' ? menus : bahan;
+      const item = arr.find(i => i.id === id);
+      if (!item) return;
+
+      const before = item.stock;
+      item.stock = physical;
+      const reason = document.getElementById('opnameReason').value.trim() || 'Opname';
+
+      stockLogs.unshift({
+        id: 's' + Date.now(),
+        date: new Date().toISOString(),
+        type: 'opname',
+        itemType: type,
+        itemId: item.id,
+        itemName: item.name,
+        before,
+        after: physical,
+        difference: physical - before,
+        reason
+      });
+
+      saveData();
+      closeModal('opnameModal');
+      renderStock();
+      toast('Opname tersimpan');
+    }
+
+    // ========== RIWAYAT ==========
+    function switchRiwayatTab(tab) {
+      currentRiwayatTab = tab;
+      document.querySelectorAll('#page-riwayat .tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === tab);
+      });
+      renderRiwayat();
+    }
+
+    function setRiwayatFilter(f) {
+      riwayatFilter = f;
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.filter === f);
+      });
+      renderRiwayat();
+    }
+
+    function renderRiwayat() {
+      const list = document.getElementById('riwayatList');
+      const now = new Date();
+      const todayStr = now.toDateString();
+      const yesterday = new Date(now);
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toDateString();
+
+      if (currentRiwayatTab === 'trx') {
+        let data = [...transactions];
+        if (riwayatFilter === 'today') {
+          data = data.filter(t => new Date(t.date).toDateString() === todayStr);
+        } else if (riwayatFilter === 'yesterday') {
+          data = data.filter(t => new Date(t.date).toDateString() === yesterdayStr);
+        }
+
+        if (data.length === 0) {
+          list.innerHTML = '<div class="empty"><div class="icon">📋</div>Belum ada transaksi</div>';
+          return;
+        }
+
+        list.innerHTML = data.map(t => `
+          <div class="history-card">
+            <div class="top" onclick="showTrxDetail('${t.id}')">
+              <div>
+                <strong>${t.customerName || 'Tanpa nama'}</strong>
+                <div class="time">${formatDate(t.date)}</div>
+              </div>
+              <div class="amount">${formatRp(t.total)}</div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+              <div style="font-size:13px; color:var(--text-muted);">
+                ${t.paymentMethod.toUpperCase()} · ${t.items.length} item
+              </div>
+              <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); confirmDeleteTrx('${t.id}')">Hapus</button>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        let data = [...stockLogs];
+        if (riwayatFilter === 'today') {
+          data = data.filter(t => new Date(t.date).toDateString() === todayStr);
+        } else if (riwayatFilter === 'yesterday') {
+          data = data.filter(t => new Date(t.date).toDateString() === yesterdayStr);
+        }
+
+        if (data.length === 0) {
+          list.innerHTML = '<div class="empty"><div class="icon">📦</div>Belum ada perubahan stok</div>';
+          return;
+        }
+
+        list.innerHTML = data.map(s => `
+          <div class="history-card">
+            <div class="top">
+              <div>
+                <strong>${s.itemName}</strong>
+                <div class="time">${formatDate(s.date)} · ${s.type}</div>
+              </div>
+              <div class="amount" style="color:${s.difference >= 0 ? 'var(--success)' : 'var(--danger)'}">
+                ${s.difference >= 0 ? '+' : ''}${s.difference}
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+              <div style="font-size:13px; color:var(--text-muted);">
+                ${s.before} → ${s.after} · ${s.reason || '-'}
+              </div>
+              <button class="btn btn-sm btn-danger" onclick="confirmDeleteStockLog('${s.id}')">Hapus</button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function showTrxDetail(id) {
+      const t = transactions.find(x => x.id === id);
+      if (!t) return;
+      document.getElementById('detailContent').innerHTML = `
+        <div style="margin-bottom:12px;">
+          <div style="font-size:13px; color:var(--text-muted);">Waktu</div>
+          <div>${formatDate(t.date)}</div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:13px; color:var(--text-muted);">Atas Nama</div>
+          <div>${t.customerName || '-'}</div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:13px; color:var(--text-muted);">Item</div>
+          ${t.items.map(i => {
+            const mods = (i.selectedModifiers && i.selectedModifiers.length) ? ` (${i.selectedModifiers.join(', ')})` : '';
+            return `<div>${i.name} × ${i.qty}${mods} = ${formatRp(i.subtotal)}</div>`;
+          }).join('')}
+        </div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:13px; color:var(--text-muted);">Total</div>
+          <div style="font-weight:700; color:var(--green); font-size:18px;">${formatRp(t.total)}</div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:13px; color:var(--text-muted);">Pembayaran</div>
+          <div>${t.paymentMethod.toUpperCase()} · Dibayar ${formatRp(t.paid)} · Kembalian ${formatRp(t.change)}</div>
+        </div>
+      `;
+      document.getElementById('detailModal').classList.add('show');
+    }
+
+    function confirmDeleteTrx(id) {
+      pendingDelete = { type: 'trx', id };
+      document.getElementById('confirmText').textContent = 'Yakin mau hapus transaksi ini?';
+      document.getElementById('confirmYesBtn').onclick = doDeleteTrx;
+      document.getElementById('confirmModal').classList.add('show');
+    }
+
+    function doDeleteTrx() {
+      if (!pendingDelete || pendingDelete.type !== 'trx') return;
+      const deletedTrx = transactions.find(t => t.id === pendingDelete.id);
+      if (deletedTrx && Array.isArray(deletedTrx.items)) {
+        deletedTrx.items.forEach(line => {
+          const menu = menus.find(m => m.id === line.menuId);
+          if (menu) menu.stock = (Number(menu.stock) || 0) + (Number(line.qty) || 0);
+        });
+      }
+      transactions = transactions.filter(t => t.id !== pendingDelete.id);
+      saveData();
+      closeModal('confirmModal');
+      renderRiwayat();
+      renderHomeSummary();
+      toast('Transaksi dihapus');
+      pendingDelete = null;
+    }
+
+    function confirmDeleteStockLog(id) {
+      pendingDelete = { type: 'stocklog', id };
+      document.getElementById('confirmText').textContent = 'Yakin mau hapus log stok ini?';
+      document.getElementById('confirmYesBtn').onclick = doDeleteStockLog;
+      document.getElementById('confirmModal').classList.add('show');
+    }
+
+    function doDeleteStockLog() {
+      if (!pendingDelete || pendingDelete.type !== 'stocklog') return;
+      stockLogs = stockLogs.filter(s => s.id !== pendingDelete.id);
+      saveData();
+      closeModal('confirmModal');
+      renderRiwayat();
+      toast('Log stok dihapus');
+      pendingDelete = null;
+    }
+
+    function confirmDeleteAllRiwayat() {
+      const label = currentRiwayatTab === 'trx' ? 'semua transaksi' : 'semua log stok';
+      pendingDelete = { type: 'all-riwayat' };
+      document.getElementById('confirmText').textContent = `Yakin mau hapus ${label} yang sedang ditampilkan?`;
+      document.getElementById('confirmYesBtn').onclick = doDeleteAllRiwayat;
+      document.getElementById('confirmModal').classList.add('show');
+    }
+
+    function doDeleteAllRiwayat() {
+      if (!pendingDelete || pendingDelete.type !== 'all-riwayat') return;
+
+      const now = new Date();
+      const todayStr = now.toDateString();
+      const yesterday = new Date(now);
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toDateString();
+
+      if (currentRiwayatTab === 'trx') {
+        if (riwayatFilter === 'today') {
+          transactions = transactions.filter(t => new Date(t.date).toDateString() !== todayStr);
+        } else if (riwayatFilter === 'yesterday') {
+          transactions = transactions.filter(t => new Date(t.date).toDateString() !== yesterdayStr);
+        } else {
+          transactions = [];
+        }
+      } else {
+        if (riwayatFilter === 'today') {
+          stockLogs = stockLogs.filter(t => new Date(t.date).toDateString() !== todayStr);
+        } else if (riwayatFilter === 'yesterday') {
+          stockLogs = stockLogs.filter(t => new Date(t.date).toDateString() !== yesterdayStr);
+        } else {
+          stockLogs = [];
+        }
+      }
+
+      saveData();
+      closeModal('confirmModal');
+      renderRiwayat();
+      renderHomeSummary();
+      toast('Data dihapus');
+      pendingDelete = null;
+    }
+
+    // ========== DATA MANAGEMENT ==========
+    function exportData() {
+      const data = { menus, bahan, transactions, stockLogs, settings, exportedAt: new Date().toISOString() };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'pijar-netra-backup-' + new Date().toISOString().slice(0,10) + '.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      toast('Data diexport');
+    }
+
+    function importData(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        try {
+          const data = JSON.parse(ev.target.result);
+          if (data.menus) menus = data.menus;
+          if (data.bahan) bahan = data.bahan;
+          if (data.transactions) transactions = data.transactions;
+          if (data.stockLogs) stockLogs = data.stockLogs;
+          if (data.settings) settings = { ...settings, ...data.settings };
+          saveData();
+          applyTheme();
+          applySettingsUI();
+          toast('Data berhasil diimport');
+          showPage('home');
+        } catch (err) {
+          toast('File tidak valid');
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    }
+
+    function confirmClearData() {
+      pendingDelete = { type: 'all' };
+      document.getElementById('confirmText').textContent = 'Yakin mau hapus SEMUA data? Transaksi, stok, menu, semuanya akan hilang. Backup dulu kalau perlu.';
+      document.getElementById('confirmYesBtn').onclick = doClearData;
+      document.getElementById('confirmModal').classList.add('show');
+    }
+
+    function doClearData() {
+      menus = [];
+      bahan = [];
+      transactions = [];
+      stockLogs = [];
+      lastTransaction = null;
+      saveData();
+      closeModal('confirmModal');
+      toast('Semua data dihapus');
+      showPage('home');
+    }
+
+    // ========== HELPERS ==========
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('show');
+    }
+
+    function formatRp(n) {
+      return 'Rp ' + (n || 0).toLocaleString('id-ID');
+    }
+
+    function formatDate(iso) {
+      const d = new Date(iso);
+      return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) + ' ' +
+             d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function toast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    // Dipanggil oleh modul Firebase saat snapshot remote berubah.
+    window.pijarApplyRemote = function(data) {
+      if (!data || typeof data !== 'object') return;
+      try {
+        menus = Array.isArray(data.menus) ? data.menus : [];
+        bahan = Array.isArray(data.bahan) ? data.bahan : [];
+        transactions = Array.isArray(data.transactions) ? data.transactions : [];
+        stockLogs = Array.isArray(data.stockLogs) ? data.stockLogs : [];
+        settings = data.settings && typeof data.settings === 'object'
+          ? { theme: 'light', showCustomerName: true, showMenuNotes: true, minStock: 10, ...data.settings }
+          : { theme: 'light', showCustomerName: true, showMenuNotes: true, minStock: 10 };
+        localStorage.setItem('pijar_menus', JSON.stringify(menus));
+        localStorage.setItem('pijar_bahan', JSON.stringify(bahan));
+        localStorage.setItem('pijar_transactions', JSON.stringify(transactions));
+        localStorage.setItem('pijar_stockLogs', JSON.stringify(stockLogs));
+        localStorage.setItem('pijar_settings', JSON.stringify(settings));
+        applyTheme();
+        applySettingsUI();
+        renderHomeSummary();
+        const activePage = document.querySelector('.page.active');
+        if (activePage && activePage.id === 'page-kasir') renderKasirMenus();
+        if (activePage && activePage.id === 'page-stock') renderStock();
+        if (activePage && activePage.id === 'page-riwayat') renderRiwayat();
+      } catch (err) {
+        console.error('Gagal menerapkan data cloud:', err);
+      }
+    };
+
+    // Start
+    init();
+  </script>
+
+  <!-- Firebase realtime sync. Isi firebaseConfig di bawah dengan konfigurasi project Firebase milikmu. -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+    import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+    import { getFirestore, doc, onSnapshot, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDAGQdiWBcg40nFxZzXbK4DT7ZlljA7SJ4",
+  authDomain: "pijar-netra-pos.firebaseapp.com",
+  projectId: "pijar-netra-pos",
+  storageBucket: "pijar-netra-pos.firebasestorage.app",
+  messagingSenderId: "173430737224",
+  appId: "1:173430737224:web:2da24ecbeeb1e96d0f4b7d",
+  measurementId: "G-MRYPXLEMKB"
+};
+
+    // Samakan storeId di semua perangkat. Jangan gunakan ID yang mudah ditebak jika data sensitif.
+    const storeId = "pijar-pos-utama";
+    const statusEl = document.getElementById('syncStatus');
+    const statusText = document.getElementById('syncStatusText');
+    let db, cloudDoc, applyingRemote = false, firstSnapshotHandled = false, pendingTimer = null;
+    let lastCloudDataHash = '';
+
+    function setStatus(state, message) {
+      if (statusEl) statusEl.dataset.state = state;
+      if (statusText) statusText.textContent = message;
+    }
+
+    function localSnapshot() {
+      return {
+        menus: JSON.parse(localStorage.getItem('pijar_menus') || '[]'),
+        bahan: JSON.parse(localStorage.getItem('pijar_bahan') || '[]'),
+        transactions: JSON.parse(localStorage.getItem('pijar_transactions') || '[]'),
+        stockLogs: JSON.parse(localStorage.getItem('pijar_stockLogs') || '[]'),
+        settings: JSON.parse(localStorage.getItem('pijar_settings') || '{"theme":"light","showCustomerName":true,"showMenuNotes":true,"minStock":10}')
+      };
+    }
+
+    function stableHash(value) {
+      return JSON.stringify(value);
+    }
+
+    window.pijarQueueSync = function() {
+      if (!db || !cloudDoc || applyingRemote) return;
+      setStatus('syncing', 'Menyimpan ke cloud…');
+      clearTimeout(pendingTimer);
+      pendingTimer = setTimeout(async () => {
+        try {
+          const data = localSnapshot();
+          lastCloudDataHash = stableHash(data);
+          await setDoc(cloudDoc, { ...data, updatedAt: serverTimestamp() });
+          setStatus('connected', 'Tersinkron');
+        } catch (err) {
+          console.error('Firebase write error:', err);
+          setStatus('error', 'Gagal sync · cek koneksi');
+        }
+      }, 350);
+    };
+
+    async function startSync() {
+      if (firebaseConfig.apiKey === 'ISI_API_KEY' || firebaseConfig.projectId === 'ISI_PROJECT_ID' || firebaseConfig.appId === 'ISI_APP_ID') {
+        setStatus('error', 'Firebase belum disetel');
+        return;
+      }
+      try {
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        await signInAnonymously(auth);
+        db = getFirestore(app);
+        cloudDoc = doc(db, 'stores', storeId);
+        onSnapshot(cloudDoc, async (snapshot) => {
+          if (!snapshot.exists()) {
+            if (!firstSnapshotHandled) {
+              firstSnapshotHandled = true;
+              window.pijarQueueSync();
+            }
+            return;
+          }
+          const remote = snapshot.data();
+          const { menus, bahan, transactions, stockLogs, settings } = remote;
+          const clean = { menus, bahan, transactions, stockLogs, settings };
+          const hash = stableHash(clean);
+          firstSnapshotHandled = true;
+          if (hash !== lastCloudDataHash) {
+            applyingRemote = true;
+            window.pijarApplyRemote(clean);
+            lastCloudDataHash = hash;
+            applyingRemote = false;
+          }
+          setStatus('connected', 'Tersinkron real-time');
+        }, (err) => {
+          console.error('Firebase snapshot error:', err);
+          setStatus('error', 'Akses ditolak · cek Rules');
+        });
+      } catch (err) {
+        console.error('Firebase init/auth error:', err);
+        setStatus('error', 'Firebase gagal terhubung');
+      }
+    }
+    startSync();
+  </script>
+
+</body>
+</html>
