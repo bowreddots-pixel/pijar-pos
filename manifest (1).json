@@ -1,13 +1,14 @@
+
 {
-  "background_color": "#ffe09d",
+  "background_color": "#FFE9AE",
   "dir": "ltr",
   "display": "standalone",
-  "name": "PIJAR NETRA POS",
+  "name": "PIDJAR POS",
   "orientation": "any",
-  "scope": "/",
-  "short_name": "PIJAR NETRA",
-  "start_url": "/",
-  "theme_color": "#526700",
-  "id": "pn",
-  "description": "Kasir"
+  "scope": "./",
+  "short_name": "Pijar Netra",
+  "start_url": "./",
+  "theme_color": "#006400"
+  "id": "./",
+  "description": "Aplikasi kasir dan manajemen stok PIDJAR"
 }
