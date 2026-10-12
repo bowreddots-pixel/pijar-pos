@@ -1130,7 +1130,18 @@
     }
 
     // ========== NAVIGATION ==========
+    let pageNavStack = [];
+let currentNavPage = 'home';
+let handlingBrowserBack = false;
+    
     function showPage(page) {
+      
+if (!handlingBrowserBack && page !== currentNavPage) {
+  pageNavStack.push(currentNavPage);
+  history.pushState({ pidjarPage: page }, '');
+}
+currentNavPage = page;
+      
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('page-' + page).classList.add('active');
       document.getElementById('backBtn').style.display = page === 'home' ? 'none' : 'block';
@@ -1151,9 +1162,35 @@
       }
     }
 
-    function goHome() {
-      showPage('home');
-    }
+
+    
+    
+function goHome() {
+  if (pageNavStack.length > 0) {
+    history.back();
+  } else {
+    showPage('home');
+  }
+}
+
+window.addEventListener('popstate', function() {
+  const previousPage = pageNavStack.pop() || 'home';
+
+  handlingBrowserBack = true;
+  currentNavPage = previousPage;
+
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + previousPage).classList.add('active');
+  document.getElementById('backBtn').style.display = previousPage === 'home' ? 'none' : 'block';
+
+  if (previousPage === 'stock') renderStock();
+  else if (previousPage === 'riwayat') renderRiwayat();
+  else if (previousPage === 'home') renderHomeSummary();
+  else if (previousPage === 'settings') applySettingsUI();
+
+  handlingBrowserBack = false;
+});
+   
 
     // ========== HOME SUMMARY ==========
     function renderHomeSummary() {
