@@ -1192,14 +1192,33 @@ window.addEventListener('popstate', function() {
 });
    
 
+    
     // ========== HOME SUMMARY ==========
     function renderHomeSummary() {
-      const today = new Date().toDateString();
-      const todayTrx = transactions.filter(t => new Date(t.date).toDateString() === today);
+      const now = new Date();
+
+      // Hari operasional dimulai pukul 18:00
+      const start = new Date(now);
+      if (now.getHours() < 18) {
+        start.setDate(start.getDate() - 1);
+      }
+      start.setHours(18, 0, 0, 0);
+
+      // Hari operasional berakhir pukul 03:00
+      const end = new Date(start);
+      end.setDate(end.getDate() + 1);
+      end.setHours(3, 0, 0, 0);
+
+      const todayTrx = transactions.filter(t => {
+        const trxDate = new Date(t.date);
+        return trxDate >= start && trxDate < end;
+      });
+
       const total = todayTrx.reduce((s, t) => s + t.total, 0);
       document.getElementById('sumTotal').textContent = formatRp(total);
       document.getElementById('sumCount').textContent = todayTrx.length;
     }
+
 
     // ========== KASIR ==========
     function renderKasirMenus() {
@@ -1755,11 +1774,28 @@ window.addEventListener('popstate', function() {
 
       if (currentRiwayatTab === 'trx') {
         let data = [...transactions];
-        if (riwayatFilter === 'today') {
-          data = data.filter(t => new Date(t.date).toDateString() === todayStr);
-        } else if (riwayatFilter === 'yesterday') {
-          data = data.filter(t => new Date(t.date).toDateString() === yesterdayStr);
+        
+        if (riwayatFilter === 'today' || riwayatFilter === 'yesterday') {
+          const shiftStart = new Date(now);
+          if (now.getHours() < 18) {
+            shiftStart.setDate(shiftStart.getDate() - 1);
+          }
+          shiftStart.setHours(18, 0, 0, 0);
+
+          if (riwayatFilter === 'yesterday') {
+            shiftStart.setDate(shiftStart.getDate() - 1);
+          }
+
+          const shiftEnd = new Date(shiftStart);
+          shiftEnd.setDate(shiftEnd.getDate() + 1);
+          shiftEnd.setHours(3, 0, 0, 0);
+
+          data = data.filter(t => {
+            const trxDate = new Date(t.date);
+            return trxDate >= shiftStart && trxDate < shiftEnd;
+          });
         }
+
 
         if (data.length === 0) {
           list.innerHTML = '<div class="empty"><div class="icon">📋</div>Belum ada transaksi</div>';
@@ -2000,6 +2036,14 @@ window.addEventListener('popstate', function() {
       return 'Rp ' + (n || 0).toLocaleString('id-ID');
     }
 
+    function getOperationalDate(date = new Date()) {
+  const d = new Date(date);
+  if (d.getHours() < 18) {
+    d.setDate(d.getDate() - 1);
+  }
+  return d.toDateString();
+    }
+    
     function formatDate(iso) {
       const d = new Date(iso);
       return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) + ' ' +
